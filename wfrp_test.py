@@ -7,6 +7,8 @@ class AddTest(unittest.TestCase):
 
     def setUp(self):
         self.wfrp = Wfrp()
+        self.command_executor = CommandExecutor(self.wfrp)
+        self.command_executor.save_after_successful_command = False
 
     def test_add_campaign(self):
         command = ['add', 'campaign', 'Paths of the Damned']
@@ -48,7 +50,7 @@ class AddTest(unittest.TestCase):
         self.execute_command(command)
 
     def execute_command(self, command):
-        self.wfrp.execute_command(command)
+        self.command_executor.execute_command(command)
 
 
 if __name__ == '__main__':
