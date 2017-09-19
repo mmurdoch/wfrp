@@ -2,6 +2,68 @@
 
 import random
 
+class Wfrp(object):
+    def __init__(self):
+        self._campaigns = []
+        self._current_campaign = None
+
+    @property
+    def campaigns(self):
+        return self._campaigns
+
+    @property
+    def current_campaign(self):
+        return self._current_campaign
+
+    def add_campaign(self, name):
+        campaign = Campaign(name)
+        self._campaigns.append(campaign)
+        self._current_campaign = campaign 
+
+    @property
+    def supported_pc_races(self):
+        return ['elf', 'human']
+
+    def execute_command(self, command):
+        if (command[0] == 'add'):
+            self.add_campaign(command[2])
+        elif (command[0] == 'generate'):
+            if not self.current_campaign:
+                raise ValueError('No current campaign')
+            else:
+                requested_pc_race = command[2]
+                if requested_pc_race in self.supported_pc_races: 
+                    self.current_campaign.add_player_character(Character(requested_pc_race))
+                else:
+                    raise ValueError('Unsupported PC race: ' + requested_pc_race)
+
+
+class Character(object):
+    def __init__(self, race):
+        self._race = race
+
+    @property
+    def race(self):
+        return self._race
+
+
+class Campaign(object):
+    def __init__(self, name):
+        self._name = name
+        self._party = []
+
+    @property
+    def name(self):
+       return self._name
+
+    def add_player_character(self, character):
+        self._party.append(character) 
+
+    @property
+    def party(self):
+       return self._party 
+
+
 pc = {
     'name': 'Bob',
     'weapon_skill': 84,
