@@ -3,6 +3,7 @@
 from wfrp import *
 
 command_executor = CommandExecutor(Wfrp.load())
+command_executor.save_after_successful_command = True
 command_executor.execute_command(sys.argv[1:])
 
 pc = {

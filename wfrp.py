@@ -3,26 +3,68 @@ import random
 import sys
 
 
+class Command(object):
+    def __init__(self, name):
+        self._name = name
+
+    @property
+    def name(self):
+        return self._name
+
+
+class AddCommand(Command):
+    def __init__(self):
+        super(AddCommand, self).__init__('add')
+
+    def execute(self, wfrp, command_parts):
+        wfrp.add_campaign(Campaign(command_parts[1])) 
+
+
+class GenerateCommand(Command):
+    def __init__(self):
+        super(GenerateCommand, self).__init__('generate')
+
+    def execute(self, wfrp, command_parts):
+        if not wfrp.current_campaign:
+            raise ValueError('No current campaign')
+        else:
+            requested_pc_race = command_parts[1]
+            if requested_pc_race in wfrp.supported_pc_races: 
+                wfrp.current_campaign.add_player_character(Character(requested_pc_race))
+            else:
+                raise ValueError('Unsupported PC race: ' + requested_pc_race)
+
+
 class CommandExecutor(object):
     def __init__(self, wfrp):
         self._wfrp = wfrp
-        self._save_after_successful_command = True
+        self._save_after_successful_command = False
 
-    def execute_command(self, command):
-        if (command[0] == 'add'):
-            self._wfrp.add_campaign(Campaign(command[2]))
-        elif (command[0] == 'generate'):
-            if not self._wfrp.current_campaign:
-                raise ValueError('No current campaign')
-            else:
-                requested_pc_race = command[2]
-                if requested_pc_race in self._wfrp.supported_pc_races: 
-                    self._wfrp.current_campaign.add_player_character(Character(requested_pc_race))
-                else:
-                    raise ValueError('Unsupported PC race: ' + requested_pc_race)
+    def execute_command(self, command_parts):
+        command_name = command_parts[0]
+
+        command = self.find_command(command_name)
+        if not command:
+            raise ValueError('Unknown command: ' + command_name)
+
+        command.execute(self._wfrp, command_parts[1:])
 
         if self.save_after_successful_command:
             self._wfrp.save()
+
+    def find_command(self, command_name):
+        for command in self.commands:
+            if command.name == command_name:
+                return command
+
+        return None
+
+    @property
+    def commands(self):
+        return [
+            AddCommand(),
+            GenerateCommand()
+        ]
 
     @property
     def save_after_successful_command(self):

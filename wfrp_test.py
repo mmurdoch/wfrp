@@ -3,12 +3,11 @@ import unittest
 from wfrp import *
 
 
-class AddTest(unittest.TestCase):
+class WfrpTest(unittest.TestCase):
 
     def setUp(self):
         self.wfrp = Wfrp()
         self.command_executor = CommandExecutor(self.wfrp)
-        self.command_executor.save_after_successful_command = False
 
     def test_add_campaign(self):
         command = ['add', 'campaign', 'Paths of the Damned']
