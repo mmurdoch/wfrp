@@ -3,6 +3,13 @@ import random
 import sys
 
 
+def find_command(commands, command_name):
+    for command in commands:
+        if command.name == command_name:
+            return command
+
+    return None
+
 class Command(object):
     def __init__(self, name):
         self._name = name
@@ -16,6 +23,14 @@ class AddCommand(Command):
     def __init__(self):
         super(AddCommand, self).__init__('add')
 
+    @property
+    def short_help(self):
+        return 'adds elements to the game'
+
+    @property
+    def long_help(self):
+        return 'ADD ADD'
+
     def execute(self, wfrp, command_parts):
         wfrp.add_campaign(Campaign(command_parts[1])) 
 
@@ -23,6 +38,14 @@ class AddCommand(Command):
 class GenerateCommand(Command):
     def __init__(self):
         super(GenerateCommand, self).__init__('generate')
+
+    @property
+    def short_help(self):
+        return 'randomly generates elements for the game'
+
+    @property
+    def long_help(self):
+        return 'GENERATE GENERATE'
 
     def execute(self, wfrp, command_parts):
         if not wfrp.current_campaign:
@@ -35,15 +58,103 @@ class GenerateCommand(Command):
                 raise ValueError('Unsupported PC race: ' + requested_pc_race)
 
 
+class CommandHelpCommand(Command):
+    def __init__(self):
+        super(CommandHelpCommand, self).__init__('help <command_name>')
+
+    @property
+    def commands(self):
+        return self._commands
+
+    @commands.setter
+    def commands(self, value):
+        self._commands = value
+
+    @property
+    def short_help(self):
+        return 'prints additional help for the specified command'
+
+    def execute(self, wfrp, command_parts):
+        command_name = command_parts[0]
+        command = find_command(self.commands, command_name)
+        if command:
+            print(command.long_help)
+        else:
+            print('Unknown command: ' + command_name)
+
+
+class HelpCommand(Command):
+    def __init__(self):
+        super(HelpCommand, self).__init__('help')
+
+    @property
+    def commands(self):
+        return self._commands
+
+    @commands.setter
+    def commands(self, value):
+        self._commands = value
+
+    @property
+    def short_help(self):
+        return 'prints this help message'
+
+    @property
+    def long_help(self):
+        return 'HELP HELP'
+
+    @property
+    def max_command_name_length(self):
+        max_name_length = 0
+
+        for command in self.commands:
+            current_name_length = len(command.name)
+            if len(command.name) > max_name_length:
+                max_name_length = current_name_length
+
+        return max_name_length
+
+    def pad_command_name(self, command_name):
+        return command_name + ' ' * (self.max_command_name_length - len(command_name))
+
+    def execute(self, wfrp, command_parts):
+        print('Warhammer Fantasy Roleplaying game assistant')
+        print('')
+
+        if len(command_parts) == 0:
+            print('Usage: wfrp <command>')
+            print('')
+            print('Where <command> is one of:')
+            print('')
+            for command in self.commands:
+                print('  ' + self.pad_command_name(command.name) +
+                      ' - ' + command.short_help)
+        else:
+            self.commands[0].execute(wfrp, command_parts)
+
 class CommandExecutor(object):
-    def __init__(self, wfrp):
+    def __init__(self, wfrp=None):
+        if not wfrp:
+            wfrp = Wfrp()
         self._wfrp = wfrp
         self._save_after_successful_command = False
+
+        command_help_command = CommandHelpCommand()
+        help_command = HelpCommand()
+        commands = [
+            command_help_command,
+            help_command,
+            AddCommand(),
+            GenerateCommand()
+        ]
+        command_help_command.commands = commands
+        help_command.commands = commands
+        self._commands = commands
 
     def execute_command(self, command_parts):
         command_name = command_parts[0]
 
-        command = self.find_command(command_name)
+        command = find_command(self.commands, command_name)
         if not command:
             raise ValueError('Unknown command: ' + command_name)
 
@@ -52,19 +163,10 @@ class CommandExecutor(object):
         if self.save_after_successful_command:
             self._wfrp.save()
 
-    def find_command(self, command_name):
-        for command in self.commands:
-            if command.name == command_name:
-                return command
-
-        return None
 
     @property
     def commands(self):
-        return [
-            AddCommand(),
-            GenerateCommand()
-        ]
+        return self._commands
 
     @property
     def save_after_successful_command(self):
