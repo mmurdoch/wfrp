@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 import json
 import random
 import sys
@@ -12,7 +10,7 @@ class CommandExecutor(object):
 
     def execute_command(self, command):
         if (command[0] == 'add'):
-            self._wfrp.add_campaign(command[2])
+            self._wfrp.add_campaign(Campaign(command[2]))
         elif (command[0] == 'generate'):
             if not self._wfrp.current_campaign:
                 raise ValueError('No current campaign')
@@ -56,8 +54,7 @@ class Wfrp(object):
     def current_campaign(self):
         return self._current_campaign
 
-    def add_campaign(self, name):
-        campaign = Campaign(name)
+    def add_campaign(self, campaign):
         self._campaigns.append(campaign)
         self._current_campaign = campaign 
 
@@ -80,7 +77,7 @@ class Wfrp(object):
         wfrp = Wfrp()
         for element in data['campaigns']:
             campaign = Campaign.from_data(element)
-            wfrp.add_campaign(campaign.name)
+            wfrp.add_campaign(campaign)
 
         return wfrp 
 
@@ -136,76 +133,3 @@ class Campaign(object):
     @staticmethod
     def from_data(data):
         return Campaign(data['name'])
-
-
-command_executor = CommandExecutor(Wfrp.load())
-command_executor.execute_command(sys.argv[1:])
-
-pc = {
-    'name': 'Bob',
-    'weapon_skill': 84,
-    'weapon_damage': 3,
-    'toughness_bonus': 3,
-    'armour': 1,
-    'wounds': 10
-}
-
-opponent = {
-    'name': 'Beastman',
-    'weapon_skill': 34,
-    'weapon_damage': 3,
-    'toughness_bonus': 3,
-    'armour': 1,
-    'wounds': 10
-}
-
-def roll_die(reason, sides):
-    result = random.randint(1, sides)
-    print(reason + ' roll: ' + str(result) + ' (out of ' + str(sides) + ')')
-
-    return result
-
-def roll_d100(reason):
-    return roll_die(reason, 100)
-
-def roll_d10(reason):
-    return roll_die(reason, 10)
-
-def roll_attack():
-    return roll_d100('Attack')
-
-def roll_damage():
-    return roll_d10('Damage')
-
-def check_roll(roll, character, attribute):
-    if roll <= character[attribute]:
-        return True
-
-    return False
-
-def make_attack(attacker, defender):
-    print(attacker['name'] + ' attacking ' + defender['name'])
-    attack_roll = roll_attack()
-
-    return check_roll(attack_roll, attacker, 'weapon_skill')
-
-if make_attack(pc, opponent):
-    print('Hit!')
-    damage_roll = roll_damage()
-    if damage_roll == 10:
-        if make_attack(pc, opponent):
-            print('Ulric\'s Fury!')
-            continue_rolling_damage = True
-            while continue_rolling_damage:
-                further_damage_roll = roll_damage()
-                print('Additional damage: ' + str(further_damage_roll))
-                damage_roll += further_damage_roll
-                if further_damage_roll != 10:
-                    continue_rolling_damage = False
-    damage = damage_roll + pc['weapon_damage'] - opponent['toughness_bonus'] - opponent['armour'] 
-    print('Opponent takes ' + str(damage) + ' damage')
-    opponent['wounds'] -= damage
-    print('Opponent now has ' + str(opponent['wounds']) + ' wounds')
-else:
-    print('Miss!')
- 

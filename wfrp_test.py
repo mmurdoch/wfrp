@@ -44,7 +44,7 @@ class AddTest(unittest.TestCase):
         self.assertEqual(race, self.wfrp.current_campaign.party[0].race)
 
     def generate_pc_with_race(self, race):
-        self.wfrp.add_campaign('Arbitrary Campaign')
+        self.wfrp.add_campaign(Campaign('Arbitrary Campaign'))
 
         command = ['generate', 'pc', race]
         self.execute_command(command)
