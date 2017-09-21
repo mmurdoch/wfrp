@@ -30,7 +30,7 @@ class Wfrp(object):
 
     @property
     def supported_pc_races(self):
-        return ['elf', 'human']
+        return ['dwarf', 'elf', 'halfling', 'human']
 
     def random_pc_race(self):
         return self.supported_pc_races[
@@ -79,6 +79,10 @@ class Character(object):
             'race': self.race
         }
 
+    @staticmethod
+    def from_data(data):
+        return Character(data['race'])
+
 
 class Campaign(object):
     def __init__(self, name):
@@ -106,4 +110,9 @@ class Campaign(object):
 
     @staticmethod
     def from_data(data):
-        return Campaign(data['name'])
+        campaign = Campaign(data['name'])
+        for element in data['party']:
+            pc = Character.from_data(element)
+            campaign.add_player_character(pc)
+
+        return campaign

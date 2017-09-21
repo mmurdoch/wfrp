@@ -11,16 +11,24 @@ class GenerateCommand(Command):
 
     @property
     def long_help(self):
-        return 'GENERATE GENERATE'
+        return (
+            'generate dwarf    - generates a dwarven player character\n' +
+            'generate elf      - generates an elven player character\n' +
+            'generate halfling - generates a halfling player character\n' +
+            'generate human    - generates a human player character\n' +
+            'generate random   - generates a player character with a random race')
 
     def execute(self, wfrp, command_parts):
         if not wfrp.current_campaign:
             raise ValueError('No current campaign')
 
         if len(command_parts) == 0:
+            raise ValueError('Missing race')
+
+        pc_race = command_parts[0]
+ 
+        if pc_race == 'random':
             pc_race = wfrp.random_pc_race()
-        else:
-            pc_race = command_parts[0]
 
         if pc_race in wfrp.supported_pc_races: 
             pc = Character(pc_race)

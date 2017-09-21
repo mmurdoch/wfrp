@@ -14,12 +14,23 @@ class GenerateCommandTest(unittest.TestCase):
         except ValueError:
             pass
 
+    def test_generate_with_no_race_fails(self):
+        wfrp = Wfrp()
+        wfrp.add_campaign(Campaign('Arbitrary Name'))
+        command = GenerateCommand()
+
+        try:
+            command.execute(wfrp, [])
+            self.fail()
+        except ValueError:
+            pass
+
     def test_generate_random_pc(self):
         wfrp = Wfrp()
         wfrp.add_campaign(Campaign('Arbitrary Name'))
         command = GenerateCommand()
 
-        command.execute(wfrp, [])
+        command.execute(wfrp, ['random'])
 
         self.assertEqual(1, len(wfrp.current_campaign.party))
 
