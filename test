@@ -1,2 +1,4 @@
-python3 wfrp_test.py
-python3 commandexecutor_test.py
+python wfrp_test.py
+python commandexecutor_test.py
+python addcommand_test.py
+python generatecommand_test.py

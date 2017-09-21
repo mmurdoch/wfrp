@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 from wfrp import *
+from commandexecutor import *
 import sys
 
 command_executor = CommandExecutor(Wfrp.load())

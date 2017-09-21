@@ -1,6 +1,6 @@
 import unittest
 
-from wfrp import *
+from commandexecutor import *
 
 
 class CommandExecutorTest(unittest.TestCase):
