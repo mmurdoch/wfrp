@@ -44,6 +44,15 @@ class AddCommand(Command):
                 int(command_parts[6]), int(command_parts[7]),
                 int(command_parts[8]), int(command_parts[9]),
                 int(command_parts[10]), int(command_parts[11])))
+        elif element_name == 'encounter':
+            if not wfrp.current_campaign:
+                raise ValueError('No current campaign')
+
+            creatures = []
+            for creature_name in command_parts[2:]:
+                creatures.append(wfrp.find_creature(creature_name))
+
+            wfrp.current_campaign.add_encounter(Encounter(
+                command_parts[1], *creatures))
         else:
             raise ValueError('Cannot add invalid element ' + element_name)
-

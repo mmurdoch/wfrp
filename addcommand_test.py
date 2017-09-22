@@ -73,7 +73,19 @@ class AddCommandTest(unittest.TestCase):
         self.assertEqual(9, pc.wounds)
 
     def test_add_encounter(self):
-        pass
+        wfrp = Wfrp()
+        wfrp.add_campaign(Campaign('Arbitrary Name'))
+        creature = Creature('Mutant', 31, 31, 31, 31, 31, 31, 31, 31, 11)
+        wfrp.add_creature(creature)
+        command = AddCommand()
+
+        name = 'Mutant Attack!'
+        command.execute(wfrp, ['encounter', name, creature.name, creature.name])
+
+        encounter = wfrp.current_campaign.encounters[0]
+        self.assertEqual(name, encounter.name)
+        self.assertEqual(creature.name, encounter.creatures[0].name)
+        self.assertEqual(creature.name, encounter.creatures[1].name)
 
     def test_add_invalid_element_fails(self):
         command = AddCommand()

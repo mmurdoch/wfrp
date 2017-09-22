@@ -1,3 +1,5 @@
-./wfrp add campaign 'Paths of the Damned'
-./wfrp add pc 'Otwin Beschlager' human 40 31 38 34 25 28 31 24 12
+rm wfrp.json
 ./wfrp add creature 'Mutant' 31 31 31 31 31 31 31 31 11
+./wfrp add campaign 'Paths of the Damned'
+./wfrp add encounter 'Mutant Attack!' Mutant Mutant Mutant Mutant
+./wfrp add pc 'Otwin Beschlager' human 40 31 38 34 25 28 31 24 12

@@ -36,6 +36,13 @@ class Wfrp(object):
     def add_creature(self, creature):
         self._creatures.append(creature)
 
+    def find_creature(self, creature_name):
+        for creature in self.creatures:
+            if creature.name == creature_name:
+                return creature
+
+        return None
+
     @property
     def supported_pc_races(self):
         return ['dwarf', 'elf', 'halfling', 'human']
@@ -85,6 +92,7 @@ class Campaign(object):
             raise ValueError('name must be a string, was ' + str(type(name)))
         self._name = name
         self._party = []
+        self._encounters = []
 
     @property
     def name(self):
@@ -97,20 +105,63 @@ class Campaign(object):
     def party(self):
        return self._party 
 
+    def add_encounter(self, encounter):
+        self._encounters.append(encounter)
+
+    @property
+    def encounters(self):
+        return self._encounters
+
     def to_data(self):
         return {
             'name': self._name,
-            'party': to_data_array(self._party)
+            'party': to_data_array(self._party),
+            'encounters': to_data_array(self._encounters)
         }
 
     @staticmethod
     def from_data(data):
         campaign = Campaign(data['name'])
+
         for element in data['party']:
             pc = Character.from_data(element)
             campaign.add_player_character(pc)
 
+        for element in data['encounters']:
+            encounter = Encounter.from_data(element)
+            campaign.add_encounter(encounter) 
+
         return campaign
+
+
+class Encounter(object):
+    def __init__(self, name, *args):
+        self._name = name
+        self._creatures = args
+
+    @property
+    def name(self):
+        return self._name
+
+    @property
+    def creatures(self):
+        return self._creatures
+
+    def to_data(self):
+        return {
+            'name': self.name,
+            'creatures': to_data_array(self._creatures)
+        }
+
+    @staticmethod
+    def from_data(data):
+        creatures = []
+
+        for element in data['creatures']:
+            creature = Creature.from_data(element)
+            creatures.append(creature)
+
+        return Encounter(data['name'], *creatures)
 
 
 class Creature(object):
