@@ -33,6 +33,48 @@ class AddCommandTest(unittest.TestCase):
         except ValueError:
             pass 
 
+    def test_add_creature(self):
+        wfrp = Wfrp()
+        command = AddCommand()
+
+        name = 'Arbitrary name'
+        command.execute(wfrp, ['creature', name, '1', '2','3','4','5','6','7','8','9'])
+
+        creature = wfrp.creatures[0]
+        self.assertEqual(name, creature.name)
+        self.assertEqual(1, creature.weapon_skill)
+        self.assertEqual(2, creature.ballistic_skill)
+        self.assertEqual(3, creature.strength)
+        self.assertEqual(4, creature.toughness)
+        self.assertEqual(5, creature.agility)
+        self.assertEqual(6, creature.intelligence)
+        self.assertEqual(7, creature.willpower)
+        self.assertEqual(8, creature.fellowship)
+        self.assertEqual(9, creature.wounds)
+
+    def test_add_pc(self):
+        wfrp = Wfrp()
+        wfrp.add_campaign(Campaign('Arbitrary Name'))
+        command = AddCommand()
+
+        name = 'Arbitrary name'
+        command.execute(wfrp, ['pc', name, 'random', '1', '2', '3', '4', '5', '6', '7', '8', '9'])
+
+        pc = wfrp.current_campaign.party[0]
+        self.assertEqual(name, pc.name)
+        self.assertEqual(1, pc.weapon_skill)
+        self.assertEqual(2, pc.ballistic_skill)
+        self.assertEqual(3, pc.strength)
+        self.assertEqual(4, pc.toughness)
+        self.assertEqual(5, pc.agility)
+        self.assertEqual(6, pc.intelligence)
+        self.assertEqual(7, pc.willpower)
+        self.assertEqual(8, pc.fellowship)
+        self.assertEqual(9, pc.wounds)
+
+    def test_add_encounter(self):
+        pass
+
     def test_add_invalid_element_fails(self):
         command = AddCommand()
 

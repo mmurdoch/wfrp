@@ -31,7 +31,20 @@ class GenerateCommand(Command):
             pc_race = wfrp.random_pc_race()
 
         if pc_race in wfrp.supported_pc_races: 
-            pc = Character(pc_race)
+            name = 'Nobody'
+            weapon_skill = 31
+            ballistic_skill = 31
+            strength = 31
+            toughness = 31
+            agility = 31
+            intelligence = 31
+            willpower = 31
+            fellowship = 31
+            wounds = 11
+            pc = Character(
+                name, pc_race,
+                weapon_skill, ballistic_skill, strength, toughness,
+                agility, intelligence, willpower, fellowship, wounds)
             wfrp.current_campaign.add_player_character(pc)
         else:
             raise ValueError('Unsupported PC race: ' + pc_race)
