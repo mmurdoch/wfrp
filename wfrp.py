@@ -88,8 +88,6 @@ class Wfrp(object):
 
 class Campaign(object):
     def __init__(self, name):
-        if not isinstance(name, str):
-            raise ValueError('name must be a string, was ' + str(type(name)))
         self._name = name
         self._party = []
         self._encounters = []
