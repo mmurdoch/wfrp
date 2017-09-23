@@ -50,6 +50,9 @@ class AddCommand(Command):
 
             creatures = []
             for creature_name in command_parts[2:]:
+                # TODO To ensure that identical creatures are treated
+                # separately in combat, need to copy the found creature
+                # TODO Write a test for this first!
                 creatures.append(wfrp.find_creature(creature_name))
 
             wfrp.current_campaign.add_encounter(Encounter(
