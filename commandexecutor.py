@@ -3,6 +3,10 @@ from addcommand import *
 from helpcommand import *
 from commandhelpcommand import *
 from generatecommand import *
+from listcommand import *
+from showcommand import *
+from gotocommand import *
+from attackcommand import *
 from wfrp import *
 
 
@@ -19,7 +23,11 @@ class CommandExecutor(object):
             command_help_command,
             help_command,
             AddCommand(),
-            GenerateCommand()
+            GenerateCommand(),
+            ListCommand(),
+            ShowCommand(),
+            GotoCommand(),
+            AttackCommand()
         ]
         command_help_command.commands = commands
         help_command.commands = commands

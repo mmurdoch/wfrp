@@ -103,12 +103,29 @@ class Campaign(object):
     def party(self):
        return self._party 
 
+    def find_player_character(self, name):
+        matching_characters = []
+
+        for pc in self.party:
+            if pc.name.startswith(name):
+                matching_characters.append(pc)
+
+        if len(matching_characters) == 1:
+            return matching_characters[0]
+
+        return None        
+
     def add_encounter(self, encounter):
         self._encounters.append(encounter)
+        self._current_encounter = self.encounters[0]
 
     @property
     def encounters(self):
         return self._encounters
+
+    @property
+    def current_encounter(self):
+        return self._current_encounter
 
     def to_data(self):
         return {
@@ -144,6 +161,12 @@ class Encounter(object):
     @property
     def creatures(self):
         return self._creatures
+
+    def find_creature(self, id):
+        if id >= 0 and id < len(self.creatures):
+            return self.creatures[id]
+
+        return None 
 
     def to_data(self):
         return {

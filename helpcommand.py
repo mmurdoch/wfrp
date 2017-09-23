@@ -18,7 +18,7 @@ class HelpCommand(Command):
 
     @property
     def long_help(self):
-        return self.name + ' - ' + self.short_help
+        return '  ' + self.name + ' - ' + self.short_help
 
     @property
     def max_command_name_length(self):

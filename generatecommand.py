@@ -12,11 +12,11 @@ class GenerateCommand(Command):
     @property
     def long_help(self):
         return (
-            'generate dwarf    - generates a dwarven player character\n' +
-            'generate elf      - generates an elven player character\n' +
-            'generate halfling - generates a halfling player character\n' +
-            'generate human    - generates a human player character\n' +
-            'generate random   - generates a player character with a random race')
+            '  generate dwarf    - generates a dwarven player character\n' +
+            '  generate elf      - generates an elven player character\n' +
+            '  generate halfling - generates a halfling player character\n' +
+            '  generate human    - generates a human player character\n' +
+            '  generate random   - generates a player character with a random race')
 
     def execute(self, wfrp, command_parts):
         if not wfrp.current_campaign:

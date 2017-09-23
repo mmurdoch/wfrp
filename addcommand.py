@@ -12,10 +12,10 @@ class AddCommand(Command):
     @property
     def long_help(self):
         return (
-            'add campaign <campaign_name> - adds a campaign with the specified name\n' +
-            'add creature <creature_name> <weapon_skill> <ballistic_skill> <strength> <toughness> <agility> <intelligence> <willpower> <fellowship> <wounds> - adds a creature with the specified characteristics\n' +
-            'add pc <character_name> <weapon_skill> <ballistic_skill> <strength> <toughness> <agility> <intelligence> <willpower> <fellowship> <wounds> - adds a player character with the specified characteristics to the current campaign\n' +
-            'add encounter <encounter_name> <creature_name> [<creature_name>]* - adds a combat encounter to the current campaign')
+            '  add campaign <campaign_name> - adds a campaign with the specified name\n' +
+            '  add creature <creature_name> <ws> <bs> <s> <t> <ag> <int> <wp> <fel> <w>\n' + '      - adds a creature with the specified characteristics\n' +
+            '  add pc <character_name> <ws> <bs> <s> <t> <ag> <int> <wp> <fel> <w>\n' + '      - adds a player character with the specified characteristics\n' + '        to the current campaign\n' +
+            '  add encounter <encounter_name> <creature_name> [<creature_name>]*\n' + '     - adds a combat encounter to the current campaign')
 
     def execute(self, wfrp, command_parts):
         if len(command_parts) == 0:
@@ -53,6 +53,10 @@ class AddCommand(Command):
                 # TODO To ensure that identical creatures are treated
                 # separately in combat, need to copy the found creature
                 # TODO Write a test for this first!
+                creature = wfrp.find_creature(creature_name)
+                if not creature:
+                    raise ValueError('Cannot add encounter with invalid creature ' + creature_name)
+
                 creatures.append(wfrp.find_creature(creature_name))
 
             wfrp.current_campaign.add_encounter(Encounter(
