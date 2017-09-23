@@ -36,8 +36,7 @@ class GotoCommand(Command):
             if len(command_parts) == 1:
                 raise ValueError('Missing ' + element_type + ' name')
 
-            if not wfrp.current_campaign:
-                raise ValueError('No current campaign')
+            check_current_campaign(wfrp)
 
             element_name = command_parts[1]
 

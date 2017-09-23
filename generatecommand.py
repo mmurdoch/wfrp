@@ -19,8 +19,7 @@ class GenerateCommand(Command):
             '  generate random   - generates a player character with a random race')
 
     def execute(self, wfrp, command_parts):
-        if not wfrp.current_campaign:
-            raise ValueError('No current campaign')
+        check_current_campaign(wfrp)
 
         if len(command_parts) == 0:
             raise ValueError('Missing race')

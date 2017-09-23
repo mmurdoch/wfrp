@@ -24,8 +24,7 @@ class ListCommand(Command):
             for campaign in wfrp.campaigns:
                 print(campaign.name)
         elif element_type == 'party':
-            if not wfrp.current_campaign:
-                raise ValueError('No current campaign')
+            check_current_campaign(wfrp)
 
             for pc in wfrp.current_campaign.party:
                 print(pc.name)

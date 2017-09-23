@@ -35,8 +35,7 @@ class AddCommand(Command):
                 int(command_parts[7]), int(command_parts[8]),
                 int(command_parts[9]), int(command_parts[10])))
         elif element_name == 'pc':
-            if not wfrp.current_campaign:
-                raise ValueError('No current campaign')
+            check_current_campaign(wfrp)
 
             wfrp.current_campaign.add_player_character(Character(
                 command_parts[1], command_parts[2], int(command_parts[3]),
@@ -45,8 +44,7 @@ class AddCommand(Command):
                 int(command_parts[8]), int(command_parts[9]),
                 int(command_parts[10]), int(command_parts[11])))
         elif element_name == 'encounter':
-            if not wfrp.current_campaign:
-                raise ValueError('No current campaign')
+            check_current_campaign(wfrp)
 
             creatures = []
             for creature_name in command_parts[2:]:
