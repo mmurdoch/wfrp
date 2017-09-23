@@ -82,7 +82,7 @@ class Wfrp(object):
                 file_content = data_file.read()
                 data = json.loads(file_content)
                 return Wfrp.from_data(data)
-        except FileNotFoundError:
+        except IOError:
             return Wfrp()   
 
 
