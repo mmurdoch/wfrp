@@ -10,6 +10,31 @@ def to_data_array(array):
 
     return data_array
 
+
+def find_element(elements, name_start):
+    matching_elements = []
+
+    for element in elements:
+        if element.name.startswith(name_start):
+            matching_elements.append(element)
+
+    if len(matching_elements) == 1:
+        return matching_elements[0]
+
+    return None        
+
+
+def roll_die(sides):
+    return random.randint(1, sides)
+
+
+def roll_d100():
+    return roll_die(100)
+
+
+def roll_d10():
+    return roll_die(10)
+
  
 class Wfrp(object):
     def __init__(self):
@@ -29,6 +54,16 @@ class Wfrp(object):
         self._campaigns.append(campaign)
         self._current_campaign = campaign 
 
+    def find_campaign(self, name_start):
+        return find_element(self.campaigns, name_start)
+
+    @property
+    def current_encounter(self):
+        if self.current_campaign:
+            return self.current_campaign.current_encounter
+
+        return None
+
     @property
     def creatures(self):
         return self._creatures
@@ -36,12 +71,8 @@ class Wfrp(object):
     def add_creature(self, creature):
         self._creatures.append(creature)
 
-    def find_creature(self, creature_name):
-        for creature in self.creatures:
-            if creature.name == creature_name:
-                return creature
-
-        return None
+    def find_creature(self, name_start):
+        return find_element(self.creatures, name_start)
 
     @property
     def supported_pc_races(self):
@@ -103,17 +134,8 @@ class Campaign(object):
     def party(self):
        return self._party 
 
-    def find_player_character(self, name):
-        matching_characters = []
-
-        for pc in self.party:
-            if pc.name.startswith(name):
-                matching_characters.append(pc)
-
-        if len(matching_characters) == 1:
-            return matching_characters[0]
-
-        return None        
+    def find_player_character(self, name_start):
+        return find_element(self.party, name_start)
 
     def add_encounter(self, encounter):
         self._encounters.append(encounter)
@@ -126,6 +148,13 @@ class Campaign(object):
     @property
     def current_encounter(self):
         return self._current_encounter
+
+    @current_encounter.setter
+    def current_encounter(self, value):
+        self._current_encounter = value
+
+    def find_encounter(self, name_start):
+        return find_element(self.encounters, name_start)
 
     def to_data(self):
         return {
@@ -152,7 +181,7 @@ class Campaign(object):
 class Encounter(object):
     def __init__(self, name, *args):
         self._name = name
-        self._creatures = args
+        self._creatures = list(args)
 
     @property
     def name(self):
@@ -167,6 +196,30 @@ class Encounter(object):
             return self.creatures[id]
 
         return None 
+
+    def attack(self, attacker, defender, attack, damage):
+        attack_roll = attack['roll']()
+        if attack_roll <= attacker.weapon_skill:
+            attack['hit']()
+            damage_roll = damage['roll']()
+            if damage_roll == 10:
+                second_attack_roll = attack['roll']()
+                if attack_roll <= attacker.weapon_skill:
+                    attack['hit']()
+                    continue_rolling_damage = True
+                    while continue_rolling_damage:
+                        further_damage_roll = damage['roll']()
+                        damage_roll += further_damage_roll
+                        if further_damage_roll != 10: 
+                            continue_rolling_damage = False
+            total_damage = damage_roll + attacker.weapon_damage - defender.toughness_bonus - defender.armour
+            if total_damage > 0:
+                damage['done'](total_damage)
+                defender.wounds -= total_damage
+            else:
+                damage['none']()
+        else:
+            attack['miss']()
 
     def to_data(self):
         return {
@@ -186,7 +239,7 @@ class Encounter(object):
 
 
 class Creature(object):
-    def __init__(self, name, weapon_skill, ballistic_skill, strength, toughness, agility, intelligence, willpower, fellowship, wounds):
+    def __init__(self, name, weapon_skill, ballistic_skill, strength, toughness, agility, intelligence, willpower, fellowship, wounds, weapon_damage, armour):
         self._name = name
         self._weapon_skill = weapon_skill
         self._ballistic_skill = ballistic_skill
@@ -196,7 +249,10 @@ class Creature(object):
         self._intelligence = intelligence
         self._willpower = willpower
         self._fellowship = fellowship
+        self._original_wounds = wounds
         self._wounds = wounds
+        self._weapon_damage = weapon_damage
+        self._armour = armour
 
     @property
     def name(self):
@@ -238,6 +294,18 @@ class Creature(object):
     def wounds(self):
         return self._wounds
 
+    @wounds.setter
+    def wounds(self, value):
+        self._wounds = value
+
+    @property
+    def weapon_damage(self):
+        return self._weapon_damage
+
+    @property
+    def armour(self):
+        return self._armour
+
     @property
     def strength_bonus(self):
         return self.strength / 10
@@ -257,7 +325,9 @@ class Creature(object):
             'intelligence': self.intelligence,
             'willpower': self.willpower,
             'fellowship': self.fellowship,
-            'wounds': self.wounds
+            'wounds': self.wounds,
+            'weapon_damage': self.weapon_damage,
+            'armour': self.armour
         }
 
     @staticmethod
@@ -272,13 +342,15 @@ class Creature(object):
             data['intelligence'],
             data['willpower'],
             data['fellowship'],
-            data['wounds'])
+            data['wounds'],
+            data['weapon_damage'],
+            data['armour'])
 
 
 class Character(Creature):
-    def __init__(self, name, race, weapon_skill, ballistic_skill, strength, toughness, agility, intelligence, willpower, fellowship, wounds):
+    def __init__(self, name, race, weapon_skill, ballistic_skill, strength, toughness, agility, intelligence, willpower, fellowship, wounds, weapon_damage, armour):
         self._race = race
-        super(Character, self).__init__(name, weapon_skill, ballistic_skill, strength, toughness, agility, intelligence, willpower, fellowship, wounds)
+        super(Character, self).__init__(name, weapon_skill, ballistic_skill, strength, toughness, agility, intelligence, willpower, fellowship, wounds, weapon_damage, armour)
 
     @property
     def race(self):
@@ -305,4 +377,6 @@ class Character(Creature):
             creature.intelligence,
             creature.willpower,
             creature.fellowship,
-            creature.wounds)
+            creature.wounds,
+            creature.weapon_damage,
+            creature.armour)

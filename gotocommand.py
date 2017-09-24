@@ -28,22 +28,22 @@ class GotoCommand(Command):
 
             element_name = command_parts[1]
 
-            for campaign in wfrp.campaigns:
-                if campaign.name == element_name:
-                    wfrp.current_campaign = campaign
-                    found = True
+            campaign = wfrp.find_campaign()
+            if campaign:
+                wfrp.current_campaign = campaign
+                found = True
         elif element_type == 'encounter':
             if len(command_parts) == 1:
                 raise ValueError('Missing ' + element_type + ' name')
 
-            check_current_campaign(wfrp)
-
             element_name = command_parts[1]
 
-            for encounter in wfrp.current_campaign.encounters:
-               if encounter.name == element_name:
-                   wfrp.current_campaign.current_encounter = encounter
-                   found = True
+            check_current_campaign(wfrp)
+
+            encounter = wfrp.current_campaign.find_encounter(element_name)
+            if encounter:
+                wfrp.current_campaign.current_encounter = encounter
+                found = True
         else:
             raise ValueError('Unknown element type ' + element_type)
 

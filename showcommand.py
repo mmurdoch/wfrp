@@ -36,30 +36,32 @@ class ShowCommand(Command):
         element_name = command_parts[0]
 
         found = False
-        for creature in wfrp.creatures:
-            if creature.name == element_name:
-                print('Name: ' + creature.name + ' (creature)')
-                self.print_creature(creature)
-                found = True
+        creature = wfrp.find_creature(element_name)
+        if creature:
+            print('Name: ' + creature.name + ' (creature)')
+            self.print_creature(creature)
+            found = True
 
-        for campaign in wfrp.campaigns:
-            if campaign.name == element_name:
-                print('Name: ' + campaign.name + ' (campaign)')
-                print('Encounters:')
-                for encounter in campaign.encounters:
-                    print('  Name: ' + encounter.name)
-                    print('  Creatures:')
-                    for i, creature in encounter.creatures:
-                        print('    Type: ' + creature.name + ' ID: ' + str(i))
+        campaign = wfrp.find_campaign(element_name)
+        if campaign:
+            print('Name: ' + campaign.name + ' (campaign)')
+            print('Encounters:')
+            for encounter in campaign.encounters:
+                print('  Name: ' + encounter.name)
+                print('  Creatures:')
+                for i in range(len(encounter.creatures)):
+                    creature = encounter.creatures[i]
+                    print('    Type: ' + creature.name + ', ID: ' + str(i))
  
                 found = True
 
-            for pc in campaign.party:
-                if pc.name == element_name:
-                    print('Name: ' + pc.name + ' (player character)')
-                    print('Race: ' + pc.race)
-                    self.print_creature(pc)
-                    found = True
+        for campaign in wfrp.campaigns:
+            pc = campaign.find_player_character(element_name)
+            if pc:
+                print('Name: ' + pc.name + ' (player character)')
+                print('Race: ' + pc.race)
+                self.print_creature(pc)
+                found = True
         
         if not found:
             raise ValueError('Unknown element ' + element_name)

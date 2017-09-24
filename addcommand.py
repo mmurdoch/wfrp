@@ -33,7 +33,8 @@ class AddCommand(Command):
                 int(command_parts[3]), int(command_parts[4]),
                 int(command_parts[5]), int(command_parts[6]),
                 int(command_parts[7]), int(command_parts[8]),
-                int(command_parts[9]), int(command_parts[10])))
+                int(command_parts[9]), int(command_parts[10]),
+                int(command_parts[11]), int(command_parts[12])))
         elif element_name == 'pc':
             check_current_campaign(wfrp)
 
@@ -42,7 +43,8 @@ class AddCommand(Command):
                 int(command_parts[4]), int(command_parts[5]),
                 int(command_parts[6]), int(command_parts[7]),
                 int(command_parts[8]), int(command_parts[9]),
-                int(command_parts[10]), int(command_parts[11])))
+                int(command_parts[10]), int(command_parts[11]),
+                int(command_parts[12]), int(command_parts[13])))
         elif element_name == 'encounter':
             check_current_campaign(wfrp)
 
