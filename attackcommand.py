@@ -160,6 +160,10 @@ class AttackCommand(Command):
         pc = wfrp.current_campaign.find_player_character(attacker)
         if pc:
             creature = self.find_creature(wfrp, defender)
+            if creature.wounds <= 0:
+                print(creature.name + '#' + defender + ' is dead')
+                return
+
             print(pc.name + ' attacking ' + creature.name + '#' + defender)
             wfrp.current_encounter.attack(pc, creature, pc_attack(), pc_damage())
         else:

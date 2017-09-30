@@ -75,7 +75,7 @@ class AddCommandTest(unittest.TestCase):
     def test_add_encounter(self):
         wfrp = Wfrp()
         wfrp.add_campaign(Campaign('Arbitrary Name'))
-        creature = Creature('Mutant', 31, 31, 31, 31, 31, 31, 31, 31, 11, 1, 0)
+        creature = Creature('Mutant', 31, 31, 31, 31, 31, 31, 31, 31, 11, 0)
         wfrp.add_creature(creature)
         command = AddCommand()
 

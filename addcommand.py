@@ -28,7 +28,7 @@ class AddCommand(Command):
 
             wfrp.add_campaign(Campaign(command_parts[1])) 
         elif element_name == 'creature':
-            if len(command_parts) < 13:
+            if len(command_parts) < 12:
                 raise ValueError('Insufficient arguments')
 
             wfrp.add_creature(Creature(
@@ -37,9 +37,9 @@ class AddCommand(Command):
                 int(command_parts[5]), int(command_parts[6]),
                 int(command_parts[7]), int(command_parts[8]),
                 int(command_parts[9]), int(command_parts[10]),
-                int(command_parts[11]), int(command_parts[12])))
+                int(command_parts[11])))
         elif element_name == 'pc':
-            if len(command_parts) < 14:
+            if len(command_parts) < 13:
                 raise ValueError('Insufficient arguments')
 
             check_current_campaign(wfrp)
@@ -50,7 +50,7 @@ class AddCommand(Command):
                 int(command_parts[6]), int(command_parts[7]),
                 int(command_parts[8]), int(command_parts[9]),
                 int(command_parts[10]), int(command_parts[11]),
-                int(command_parts[12]), int(command_parts[13])))
+                int(command_parts[12])))
         elif element_name == 'encounter':
             if len(command_parts) < 2:
                 raise ValueError('Missing creature name')

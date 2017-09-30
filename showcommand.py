@@ -47,11 +47,18 @@ class ShowCommand(Command):
             print('Name: ' + campaign.name + ' (campaign)')
             print('Encounters:')
             for encounter in campaign.encounters:
-                print('  Name: ' + encounter.name)
+                encounter_state = ''
+                print('Current encounter is: ' + campaign.current_encounter.name)
+                if campaign.current_encounter == encounter:
+                    encounter_state = ' (current)' 
+                print('  Name: ' + encounter.name + encounter_state)
                 print('  Creatures:')
                 for i in range(len(encounter.creatures)):
                     creature = encounter.creatures[i]
-                    print('    Type: ' + creature.name + ', ID: ' + str(i))
+                    creature_state = ''
+                    if creature.wounds <= 0:
+                        creature_state = ' (deceased)'
+                    print('    Type: ' + creature.name + ', ID: ' + str(i) + creature_state)
  
                 found = True
 

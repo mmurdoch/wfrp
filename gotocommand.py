@@ -44,6 +44,8 @@ class GotoCommand(Command):
             if encounter:
                 wfrp.current_campaign.current_encounter = encounter
                 found = True
+            else:
+                raise ValueError('Unknown encounter ' + element_name)
         else:
             raise ValueError('Unknown element type ' + element_type)
 

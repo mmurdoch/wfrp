@@ -122,6 +122,7 @@ class Campaign(object):
         self._name = name
         self._party = []
         self._encounters = []
+        self._current_encounter = None
 
     @property
     def name(self):
@@ -157,11 +158,16 @@ class Campaign(object):
         return find_element(self.encounters, name_start)
 
     def to_data(self):
-        return {
+        data = {
             'name': self._name,
-            'party': to_data_array(self._party),
-            'encounters': to_data_array(self._encounters)
+            'party': to_data_array(self.party),
+            'encounters': to_data_array(self.encounters)
         }
+
+        if self.current_encounter:
+            data['current_encounter'] = self.current_encounter.name
+
+        return data
 
     @staticmethod
     def from_data(data):
@@ -174,6 +180,9 @@ class Campaign(object):
         for element in data['encounters']:
             encounter = Encounter.from_data(element)
             campaign.add_encounter(encounter) 
+
+        if 'current_encounter' in data:
+            campaign.current_encounter = campaign.find_encounter(data['current_encounter'])
 
         return campaign
 
@@ -211,7 +220,7 @@ class Encounter(object):
 
         return damage_roll
 
-    def make_attack(self, attacker, defender, attack, damage, roll_damage):
+    def make_attack(self, attacker, attack, damage, roll_damage):
         attack_roll = attack['roll']()
         if attack_roll <= attacker.weapon_skill:
             attack['hit']()
@@ -221,9 +230,9 @@ class Encounter(object):
             return 0
     
     def attack(self, attacker, defender, attack, damage):
-        damage_roll = self.make_attack(attacker, defender, attack, damage, self.first_attack_roll_damage)
+        damage_roll = self.make_attack(attacker, attack, damage, self.first_attack_roll_damage)
         if damage_roll == 10:
-            damage_roll += self.make_attack(attacker, defender, attack, damage, self.ulriks_fury_roll_damage)
+            damage_roll += self.make_attack(attacker, attack, damage, self.ulriks_fury_roll_damage)
 
         if damage_roll > 0:
             damage['weapon'](attacker.name, attacker.weapon_damage)
@@ -254,7 +263,7 @@ class Encounter(object):
 
 
 class Creature(object):
-    def __init__(self, name, weapon_skill, ballistic_skill, strength, toughness, agility, intelligence, willpower, fellowship, wounds, weapon_damage, armour):
+    def __init__(self, name, weapon_skill, ballistic_skill, strength, toughness, agility, intelligence, willpower, fellowship, wounds, armour):
         self._name = name
         self._weapon_skill = weapon_skill
         self._ballistic_skill = ballistic_skill
@@ -266,7 +275,6 @@ class Creature(object):
         self._fellowship = fellowship
         self._original_wounds = wounds
         self._wounds = wounds
-        self._weapon_damage = weapon_damage
         self._armour = armour
 
     @property
@@ -315,7 +323,7 @@ class Creature(object):
 
     @property
     def weapon_damage(self):
-        return self._weapon_damage
+        return self.strength_bonus
 
     @property
     def armour(self):
@@ -341,7 +349,6 @@ class Creature(object):
             'willpower': self.willpower,
             'fellowship': self.fellowship,
             'wounds': self.wounds,
-            'weapon_damage': self.weapon_damage,
             'armour': self.armour
         }
 
@@ -358,14 +365,13 @@ class Creature(object):
             data['willpower'],
             data['fellowship'],
             data['wounds'],
-            data['weapon_damage'],
             data['armour'])
 
 
 class Character(Creature):
-    def __init__(self, name, race, weapon_skill, ballistic_skill, strength, toughness, agility, intelligence, willpower, fellowship, wounds, weapon_damage, armour):
+    def __init__(self, name, race, weapon_skill, ballistic_skill, strength, toughness, agility, intelligence, willpower, fellowship, wounds, armour):
         self._race = race
-        super(Character, self).__init__(name, weapon_skill, ballistic_skill, strength, toughness, agility, intelligence, willpower, fellowship, wounds, weapon_damage, armour)
+        super(Character, self).__init__(name, weapon_skill, ballistic_skill, strength, toughness, agility, intelligence, willpower, fellowship, wounds, armour)
 
     @property
     def race(self):
@@ -393,5 +399,4 @@ class Character(Creature):
             creature.willpower,
             creature.fellowship,
             creature.wounds,
-            creature.weapon_damage,
             creature.armour)
