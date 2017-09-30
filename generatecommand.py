@@ -40,10 +40,13 @@ class GenerateCommand(Command):
             willpower = 31
             fellowship = 31
             wounds = 11
+            weapon_damage = 1
+            armour = 0
             pc = Character(
                 name, pc_race,
                 weapon_skill, ballistic_skill, strength, toughness,
-                agility, intelligence, willpower, fellowship, wounds)
+                agility, intelligence, willpower, fellowship, wounds,
+                weapon_damage, armour)
             wfrp.current_campaign.add_player_character(pc)
         else:
             raise ValueError('Unsupported PC race: ' + pc_race)

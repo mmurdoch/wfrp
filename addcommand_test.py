@@ -38,7 +38,7 @@ class AddCommandTest(unittest.TestCase):
         command = AddCommand()
 
         name = 'Arbitrary name'
-        command.execute(wfrp, ['creature', name, '1', '2','3','4','5','6','7','8','9'])
+        command.execute(wfrp, ['creature', name, '1', '2','3','4','5','6','7','8','9', '10', '11'])
 
         creature = wfrp.creatures[0]
         self.assertEqual(name, creature.name)
@@ -58,7 +58,7 @@ class AddCommandTest(unittest.TestCase):
         command = AddCommand()
 
         name = 'Arbitrary name'
-        command.execute(wfrp, ['pc', name, 'random', '1', '2', '3', '4', '5', '6', '7', '8', '9'])
+        command.execute(wfrp, ['pc', name, 'random', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11'])
 
         pc = wfrp.current_campaign.party[0]
         self.assertEqual(name, pc.name)
@@ -75,7 +75,7 @@ class AddCommandTest(unittest.TestCase):
     def test_add_encounter(self):
         wfrp = Wfrp()
         wfrp.add_campaign(Campaign('Arbitrary Name'))
-        creature = Creature('Mutant', 31, 31, 31, 31, 31, 31, 31, 31, 11)
+        creature = Creature('Mutant', 31, 31, 31, 31, 31, 31, 31, 31, 11, 1, 0)
         wfrp.add_creature(creature)
         command = AddCommand()
 
