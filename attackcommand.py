@@ -44,16 +44,33 @@ def pc_damage_none():
     print('Deflected, no damage')
 
 
+def weapon_damage(name, damage):
+    print('Plus ' + name + '\'s weapon damage: ' + str(damage))
+
+
+def toughness(name, toughness_bonus):
+    print('Minus ' + name + '\'s toughness bonus: ' + str(toughness_bonus))
+
+
+def armour(name, armour):
+    print('Minus ' + name + '\'s armour: ' + str(armour))
+
+
 def pc_damage():
     return {
         'roll': get_pc_damage_roll,
         'done': pc_damage_done,
-        'none': pc_damage_none } 
+        'none': pc_damage_none,
+        'weapon': weapon_damage,
+        'toughness': toughness,
+        'armour': armour }
 
 
 def get_creature_attack_roll():
-    return d100()
+    attack_roll = roll_d100()
+    print('Attack roll (d100): ' + str(attack_roll))
 
+    return attack_roll
 
 def creature_attack_hit():
     print('Hit!')
@@ -71,22 +88,29 @@ def creature_attack():
 
 
 def get_creature_damage_roll():
-    return d10()
+    damage_roll = roll_d10()
+    print('Damage roll (d10): ' + str(damage_roll))
+
+    return damage_roll
+    return roll_d10()
 
 
 def creature_damage_done(damage):
     print('Inflicted ' + str(damage) + ' damage')
 
 
-def creature_damage_done():
+def creature_damage_none():
     print('Deflected, no damage')
 
 
 def creature_damage():
     return {
-        'roll': get_creature_attack_roll,
-        'hit': creature_attack_hit,
-        'miss': creature_attack_miss }
+        'roll': get_creature_damage_roll,
+        'done': creature_damage_done,
+        'none': creature_damage_none,
+        'weapon': weapon_damage,
+        'toughness': toughness,
+        'armour': armour }
 
 
 class AttackCommand(Command):

@@ -197,29 +197,44 @@ class Encounter(object):
 
         return None 
 
-    def attack(self, attacker, defender, attack, damage):
+    def first_attack_roll_damage(self, damage):
+        return damage['roll']()
+
+    def ulriks_fury_roll_damage(self, damage):
+        damage_roll = 0
+        continue_rolling_damage = True
+        while continue_rolling_damage:
+            further_damage_roll = damage['roll']()
+            damage_roll += further_damage_roll
+            if further_damage_roll != 10: 
+                continue_rolling_damage = False
+
+        return damage_roll
+
+    def make_attack(self, attacker, defender, attack, damage, roll_damage):
         attack_roll = attack['roll']()
         if attack_roll <= attacker.weapon_skill:
             attack['hit']()
-            damage_roll = damage['roll']()
-            if damage_roll == 10:
-                second_attack_roll = attack['roll']()
-                if attack_roll <= attacker.weapon_skill:
-                    attack['hit']()
-                    continue_rolling_damage = True
-                    while continue_rolling_damage:
-                        further_damage_roll = damage['roll']()
-                        damage_roll += further_damage_roll
-                        if further_damage_roll != 10: 
-                            continue_rolling_damage = False
+            return roll_damage(damage)
+        else:
+            attack['miss']()
+            return 0
+    
+    def attack(self, attacker, defender, attack, damage):
+        damage_roll = self.make_attack(attacker, defender, attack, damage, self.first_attack_roll_damage)
+        if damage_roll == 10:
+            damage_roll += self.make_attack(attacker, defender, attack, damage, self.ulriks_fury_roll_damage)
+
+        if damage_roll > 0:
+            damage['weapon'](attacker.name, attacker.weapon_damage)
+            damage['toughness'](defender.name, defender.toughness_bonus)
+            damage['armour'](defender.name, defender.armour)
             total_damage = damage_roll + attacker.weapon_damage - defender.toughness_bonus - defender.armour
             if total_damage > 0:
                 damage['done'](total_damage)
                 defender.wounds -= total_damage
             else:
                 damage['none']()
-        else:
-            attack['miss']()
 
     def to_data(self):
         return {
