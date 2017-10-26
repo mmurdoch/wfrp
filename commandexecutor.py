@@ -7,6 +7,7 @@ from listcommand import *
 from showcommand import *
 from gotocommand import *
 from attackcommand import *
+from rollcommand import *
 from wfrp import *
 
 
@@ -27,7 +28,8 @@ class CommandExecutor(object):
             ListCommand(),
             ShowCommand(),
             GotoCommand(),
-            AttackCommand()
+            AttackCommand(),
+            RollCommand()
         ]
         command_help_command.commands = commands
         help_command.commands = commands
