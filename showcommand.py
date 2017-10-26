@@ -28,6 +28,7 @@ class ShowCommand(Command):
         print('  Willpower:       ' + percent(creature.willpower))
         print('  Fellowship:      ' + percent(creature.fellowship))
         print('  Wounds:          ' + str(creature.wounds))
+        print('  Armour:          ' + str(creature.armour))
 
     def execute(self, wfrp, command_parts):
         if len(command_parts) == 0:
@@ -45,10 +46,10 @@ class ShowCommand(Command):
         campaign = wfrp.find_campaign(element_name)
         if campaign:
             print('Name: ' + campaign.name + ' (campaign)')
+            print('Current encounter is: ' + campaign.current_encounter.name)
             print('Encounters:')
             for encounter in campaign.encounters:
                 encounter_state = ''
-                print('Current encounter is: ' + campaign.current_encounter.name)
                 if campaign.current_encounter == encounter:
                     encounter_state = ' (current)' 
                 print('  Name: ' + encounter.name + encounter_state)
